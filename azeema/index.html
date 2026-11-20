@@ -235,7 +235,7 @@ const CONFIG = {
   shareText: "تغدّيت صيادية سمك في عزيمة نينجا 😋 وطلعت بأكواد 🎁 تقدر تلقاها كلها؟",
   shareUrl: "https://ninja-activity.github.io/azeema/",
 };
-const CODES=((b,k)=>{try{const d=atob(b.split('').reverse().join(''));let o='';for(let i=0;i<d.length;i++)o+=String.fromCharCode(d.charCodeAt(i)^k[i%k.length]^((i*7)&255));return JSON.parse(o)}catch(e){return{}}})('=gZ39itKzDnU4jvWTJ2j0UHPt8DWnC2jOf3UkzK8FwFQxyqwgmh8xV1kDH3HrMN1S/YjY1TzEIIhvJ15jXLREMwbxRgZ5L9R1p5g5MhIZTPnaDMkxrgzvc+VwVoz/DgSAUyMPlEqQxN/UF5KUJ39Wi41G6I6OI9DHEKkFBM8EoEIFV0LGoPUcv/HCc70DeW2dHInSr9K4/2YDfPTE4zhG78ZUI2B3PBkV3HOZ27gslBAX8Qk67h0sQzjzCwYS9L5nOt1rqII',[91, 175, 195, 170, 185, 225, 236, 180, 74, 126, 13, 191, 153, 60, 15, 139]);
+const CODES=((b,k)=>{try{const d=atob(b.split('').reverse().join(''));let o='';for(let i=0;i<d.length;i++)o+=String.fromCharCode(d.charCodeAt(i)^k[i%k.length]^((i*7)&255));return JSON.parse(o)}catch(e){return{}}})('=MxNrpiM6KIWqWKykfcy2t9tHnuq/mSfEXiD2tRVD5h76YEFSFwuD+VweOOqOWpl8RwZO+c1NBnj98QdUBhAG1K5bKNlhvZt/hs3rS6hfarMRpiRDIxhd3eBtcReaZECu6a2ZuLsZ4i9GwcujfdsUbCXshlGWsZ/NMfzXfXVChgjO/a+0LeGuEfTfVCZmEymzpgdEgyMx2ZaRqq3zuZwECG7+Tb9vrlYf/SZLogJqslrcW+RIYwme7T3uLJ13nvpJgFP9hHO',[67, 93, 21, 64, 50, 79, 174, 242, 239, 201, 159, 226, 203, 54, 253, 194]);
 
 const ITEMS=[
  ['five','🍚','خامس لقمة!','بدأت تنبسط… هذا كودك 😋'],
@@ -377,7 +377,8 @@ const cupTap=()=>{
  if(finjan){finjan=0;drank=1;setCup();snd(350,.15);if(dateEaten)award('coffee');else toast('القهوة أحلى مع تمرة 😉 جرّب التمر');return}
  if(!drank){toast('صب لك من الدلّة أول ☕');anim('dallah',[{transform:'rotate(0)'},{transform:'rotate(-5deg)'},{transform:'rotate(5deg)'},{transform:'rotate(0)'}],{duration:500,iterations:2});return}
  anim('finjanE',[{transform:'rotate(0)'},{transform:'rotate(-16deg)'},{transform:'rotate(16deg)'},{transform:'rotate(0)'}],{duration:450,iterations:2});
- if(bites<CONFIG.winBites){hostTimes++;if(hostTimes==1)setTimeout(()=>award('host'),700);else toast(`المعزّب: ${bites} لقمات بس؟! والله ما تقوم 😤 (لازم ${CONFIG.winBites})`);return}
+ if(!found.includes('host')){hostTimes++;setTimeout(()=>award('host'),700);return}
+ if(bites<CONFIG.winBites){toast(`المعزّب: ${bites} لقمات بس؟! والله ما تقوم 😤 (لازم ${CONFIG.winBites})`);return}
  setTimeout(()=>{won=1;$('winCode').textContent=CODES.big||'—';$('share').href='https://wa.me/?text='+encodeURIComponent(CONFIG.shareText+(CONFIG.shareUrl?'\n'+CONFIG.shareUrl:''));queue.push(()=>{showModal('mWin');ding();setTimeout(ding,300);buzz([40,40,40,40,80])});next()},900)};
 $('finjanE').onclick=cupTap;$('finjanF').onclick=cupTap;
 $('pillowL').onclick=()=>toast(['مريح… بس مافيه شي 😌','تدوّر تحت المركى؟ 😂 الكود مو هنا'][(Math.random()*2)|0]);
