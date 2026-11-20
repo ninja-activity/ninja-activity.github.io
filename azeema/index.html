@@ -236,7 +236,12 @@ const CONFIG = {
   shareText: "تغدّيت صيادية سمك في عزيمة نينجا 😋 وطلعت بأكواد 🎁 تقدر تلقاها كلها؟",
   shareUrl: "https://ninja-activity.github.io/azeema/",
 };
-const CODES=((b,k)=>{try{const d=atob(b.split('').reverse().join(''));let o='';for(let i=0;i<d.length;i++)o+=String.fromCharCode(d.charCodeAt(i)^k[i%k.length]^((i*7)&255));return JSON.parse(o)}catch(e){return{}}})('=kOzaLiZ9xYOCx/XLZHyYoST8glor7+cl28VhTL5CB3HA3bpaVFfN6TKHT3B/QJ+N6Pn/ccgK637Vbl47H6AowlHgNGn1y1ueAyh8sgNei9wrG99LYEQTzY70Bo1rfkZfRlIoML5eDyluXpLMZGs6etpXmuECx18stBlAhN5DZ2f0QFS8br3gAZpGI7yXCS9CCfj1CyZ2NJC5NfScoCwqHpFFUQ/72Jb+eMPcW6lrUzXm5h9AIFXQ/VN3WweGhPy4L6xMDHb',[23, 85, 164, 187, 200, 190, 192, 243, 94, 102, 8, 187, 35, 87, 243, 5]);
+const VAULT={"five": ["XY4WXHqy3HUzUuyWfTmMeQ==", "IgOACfI2PvgTffvp", "3HZVLHuUM0IiQZ6lMMcRBo/LzZT4hQ=="], "royal": ["iD2BgbVHJ8h1YEMDzYRE2g==", "ghsww6gCNuPQ7dWC", "1WPEpHTwU41iH334QTBjyHiezIDwmA=="], "legend": ["8Rdm+SQ2z5/TQha1KRTcGA==", "pDWRTHGMsQJocGsZ", "p6ZdlqKk0GHWxjGfvHk2jTL9TCDpBQ=="], "laban": ["4Pfg2UkrixeGudc5IrodGA==", "zJyKCmk92CuAud8t", "4GXQRM/y+G9F6iJBt/DkinOs2wOlbQ=="], "pepsi": ["eK6fXxx6YVpI1VGKelNhnA==", "tZpAv5RPQ/oS7R5r", "eVsbUPrQmhHzMRGlXgw/WliDQ5laNg=="], "lemon": ["agmuzvOWXMz2nzdlnp/VDQ==", "QlVfTwZM1D+BVikA", "EPcnSyobDhdgQ/kxM0GI9sxAV+53SQ=="], "coffee": ["WELU/jHPAdVM3CWw6InO8w==", "pulqjFe6t11a9KlO", "YNcZisjcu73J2kX89IeZhNB+AGAH2g=="], "host": ["l+3K5pLAz5T3BSfBpdOxYA==", "+ie2kMfwWtYsw5jS", "/M6/3zGpzEysuojqoX6I9JaZ3svglw=="], "bag": ["3unkHVKFacqUPJaiavCm0g==", "4hS3OtD5JphytD3e", "mXWLEhLyvlGbURUmRinpMm6ySdkc5Q=="], "big": ["WjhNzci7innar3OScKUMGg==", "oQX6htWwATVXdbCQ", "WE3+WVsuYsWDrqRB5oFSFAPVobQhPw=="]};
+const _p=[126,17,26,33,110,77,45,39,48,127,5,44,50,47,64,12,20,38,90,35,10,96,8,51,60,69,74,29,57,85,17,30].map((c,i)=>String.fromCharCode(c^((i*31+7)&127))).join('');
+const _ub=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
+const getCode=async id=>{try{const v=VAULT[id];if(!v)return '—';const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(_p+':'+id),'PBKDF2',false,['deriveKey']);
+ const k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:_ub(v[0]),iterations:200000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+ const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:_ub(v[1])},k,_ub(v[2]));return new TextDecoder().decode(pt)}catch(e){return '—'}};
 
 const ITEMS=[
  ['five','🍚','خامس لقمة!','بدأت تنبسط… هذا كودك 😋'],
@@ -258,8 +263,9 @@ const NAMES={rana:'🔥 شطة',shrimp:'🦐 ربيان',rice:'🍚 رز',meat:'
 const $=id=>document.getElementById(id);
 const NS='http://www.w3.org/2000/svg';
 const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e};
-let found=[];try{found=JSON.parse(localStorage.getItem('ninja_kabsa_v1')||'[]')}catch(e){}
-const save=()=>{try{localStorage.setItem('ninja_kabsa_v1',JSON.stringify(found))}catch(e){}};
+let EARNED={};try{EARNED=JSON.parse(localStorage.getItem('nj_azeema_v2')||'{}')||{}}catch(e){}
+let found=Object.keys(EARNED).filter(k=>k!='big');
+const save=()=>{try{localStorage.setItem('nj_azeema_v2',JSON.stringify(EARNED))}catch(e){}};
 let bkhShown=0,bites=0,hand=[],took=[],labanDone=0,pepsiDone=0,lemonDone=0,dateEaten=0,datesLeft=4,finjan=0,drank=0,pillowDone=0,won=0,hostTimes=0;
 
 /* ---- sound ---- */
@@ -311,9 +317,10 @@ const copy=txt=>{const ok=()=>toast('تم النسخ ✅');try{navigator.clipboa
 document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copy($(b.dataset.copy).textContent));
 
 const count=()=>{$('cCount').textContent=found.filter(f=>ITEMS.some(x=>x[0]==f)).length+'/9';$('bites').textContent=bites};
-const award=id=>{const it=ITEMS.find(x=>x[0]==id);const first=!found.includes(id);
- if(first){found.push(id);save()}
- queue.push(()=>{$('mcI').innerHTML=it[1];$('mcT').textContent=first?it[2]:it[2]+' (لقيته قبل)';$('mcP').textContent=it[3];$('mcCode').textContent=CODES[id]||'—';showModal('mCode');ding();buzz([30,40,30])});
+const award=async id=>{const it=ITEMS.find(x=>x[0]==id);const first=!found.includes(id);
+ if(first){found.push(id)}
+ const code=EARNED[id]||await getCode(id);if(code!='—'){EARNED[id]=code;save()}
+ queue.push(()=>{$('mcI').innerHTML=it[1];$('mcT').textContent=first?it[2]:it[2]+' (لقيته قبل)';$('mcP').textContent=it[3];$('mcCode').textContent=code;showModal('mCode');ding();buzz([30,40,30])});
  count();if(first){const p=$('pCodes');p.classList.remove('bump');void p.offsetWidth;p.classList.add('bump')}next()};
 
 /* ---- hand ---- */
@@ -380,7 +387,7 @@ const cupTap=()=>{
  anim('finjanE',[{transform:'rotate(0)'},{transform:'rotate(-16deg)'},{transform:'rotate(16deg)'},{transform:'rotate(0)'}],{duration:450,iterations:2});
  if(!found.includes('host')){hostTimes++;setTimeout(()=>award('host'),700);return}
  if(bites<CONFIG.winBites){toast(`المعزّب: ${bites} لقمات بس؟! والله ما تقوم 😤 (لازم ${CONFIG.winBites})`);return}
- setTimeout(()=>{won=1;$('winCode').textContent=CODES.big||'—';$('share').href='https://wa.me/?text='+encodeURIComponent(CONFIG.shareText+(CONFIG.shareUrl?'\n'+CONFIG.shareUrl:''));queue.push(()=>{showModal('mWin');ding();setTimeout(ding,300);buzz([40,40,40,40,80])});next()},900)};
+ setTimeout(async()=>{won=1;const bc=EARNED.big||await getCode('big');if(bc!='—'){EARNED.big=bc;save()}$('winCode').textContent=bc;$('share').href='https://wa.me/?text='+encodeURIComponent(CONFIG.shareText+(CONFIG.shareUrl?'\n'+CONFIG.shareUrl:''));queue.push(()=>{showModal('mWin');ding();setTimeout(ding,300);buzz([40,40,40,40,80])});next()},900)};
 $('finjanE').onclick=cupTap;$('finjanF').onclick=cupTap;
 $('pillowL').onclick=()=>toast(['مريح… بس مافيه شي 😌','تدوّر تحت المركى؟ 😂 الكود مو هنا'][(Math.random()*2)|0]);
 $('pillowR').onclick=()=>{if(bagDone)toast('مريح… بس مافيه شي ثاني 😌');else pullBag()};
@@ -389,7 +396,7 @@ $('spoonHit').onclick=()=>{if($('spoon').style.display=='none')return;$('spoon')
 $('tissue').onclick=()=>toast('لا تمسح يدك… لسا ما خلصت 😂');
 
 /* ---- list ---- */
-$('pCodes').onclick=()=>{$('list').innerHTML=ITEMS.map(([id,ic,nm])=>found.includes(id)?`<div class="row"><span class="ic">${ic}</span><span class="nm">${nm}</span><span class="cd en" data-c="${CODES[id]||''}">${CODES[id]||'—'}</span></div>`:`<div class="row lock"><span class="ic">🔒</span><span class="nm">كود مخبّى… دوّر عليه</span></div>`).join('')+(won?`<div class="row"><span class="ic">🏆</span><span class="nm">الكود الكبير</span><span class="cd en" data-c="${CODES.big}">${CODES.big}</span></div>`:'');
+$('pCodes').onclick=()=>{$('list').innerHTML=ITEMS.map(([id,ic,nm])=>found.includes(id)?`<div class="row"><span class="ic">${ic}</span><span class="nm">${nm}</span><span class="cd en" data-c="${EARNED[id]||''}">${EARNED[id]||'—'}</span></div>`:`<div class="row lock"><span class="ic">🔒</span><span class="nm">كود مخبّى… دوّر عليه</span></div>`).join('')+(EARNED.big?`<div class="row"><span class="ic">🏆</span><span class="nm">الكود الكبير</span><span class="cd en" data-c="${EARNED.big}">${EARNED.big}</span></div>`:'');
  $('list').querySelectorAll('.cd').forEach(c=>c.onclick=()=>copy(c.dataset.c));$('lBar').style.width=found.filter(f=>ITEMS.some(x=>x[0]==f)).length/9*100+'%';showModal('mList')};
 
 $('start').onclick=()=>{initAudio();$('intro').style.display='none';play('iqlotu');setTimeout(()=>{play('shoftkom');toast('ما من جوع… المقصد شوفتكم 🤍')},30000);setTimeout(()=>{toast('اضغط على الرز والسمك والربيان وجمّع لقمتك 🤲');toast('اضغط على الرز والسمك والربيان وجمّع لقمتك 🤲')},400);setTimeout(()=>0,5000)};
